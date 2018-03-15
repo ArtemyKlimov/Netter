@@ -7,24 +7,20 @@ public class Netter {
         String mask = "8";
         int maskInt = Integer.parseInt(mask);
         int neededSubNet = 1;
-        int subNetNumber = 7 + 2;
-        int minSubNetNumber = 2;
-        int bitsForSubNet = 1;
+        int subNetNumber = 7;
+
+
         int neededHost = 672805;
-        while(true) {
-            if (minSubNetNumber >= subNetNumber)
-                break;
-            minSubNetNumber = minSubNetNumber * 2;
-            bitsForSubNet +=1;
-        }
+        int maxHostsInEachSubNet = 69 + 2;
+        
+
+        int bitsForSubNet = getBitsForSubNet(subNetNumber);
         int newMask = maskInt + bitsForSubNet;
-        System.out.println(minSubNetNumber);
+       // System.out.println(minSubNetNumber);
         System.out.println(bitsForSubNet);
 
-        int[] binaryIp = getBinaryIP(ip);
-        for (int bit : binaryIp) {
-            System.out.print(bit);
-        }
+        //int[] binaryIp = getBinaryIP(ip);
+
         System.out.println();
         String originalIP = getBinaryIpAsString(ip);
         String originalNetAddr = originalIP.substring(0, maskInt);
@@ -38,6 +34,7 @@ public class Netter {
         String hostAddr = padLeft(getHostAddr(subnetAddrResult, neededHost), 32);
         System.out.println(hostAddr);
         System.out.println(getToHumanReadableAddr(hostAddr) + "/" + newMask);
+
     }
 
     private static String getBinaryIpAsString(String source) {
@@ -50,6 +47,19 @@ public class Netter {
             str.append(padLeft(s, 8));
         }
         return str.toString();
+    }
+
+
+    private static int getBitsForSubNet(int subNetNumber) {
+        int bitsForSubNet = 1;
+        int minSubNetNumber = 2;
+        while(true) {
+            if (minSubNetNumber >= subNetNumber)
+                break;
+            minSubNetNumber = minSubNetNumber * 2;
+            bitsForSubNet +=1;
+        }
+        return bitsForSubNet;
     }
 
     private static String getToHumanReadableAddr(String source) {
