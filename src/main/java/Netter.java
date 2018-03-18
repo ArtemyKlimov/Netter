@@ -3,41 +3,33 @@
  */
 public class Netter {
     public static void main(String[] args) {
-        String ip = "94.0.0.0";
-        String mask = "8";
-        int maskInt = Integer.parseInt(mask);
-        int neededSubNet = 1;
-        int subNetNumber = 7;
+        String ip =  "169.219.0.0";
+        int maskInt = 16;
+        int subNetNumber = 86;
 
-
-        int neededHost = 672805;
-        int maxHostsInEachSubNet = 69 + 2;
-        
-
-        int bitsForSubNet = getBitsForSubNet(subNetNumber);
-        int newMask = maskInt + bitsForSubNet;
-       // System.out.println(minSubNetNumber);
-        System.out.println(bitsForSubNet);
-
-        //int[] binaryIp = getBinaryIP(ip);
-
-        System.out.println();
-        String originalIP = getBinaryIpAsString(ip);
-        String originalNetAddr = originalIP.substring(0, maskInt);
-        int subnetAddr = Integer.parseInt(originalIP.substring(maskInt, newMask), 2) + neededSubNet;
-        System.out.println(originalNetAddr);
-        System.out.println(Integer.toBinaryString(subnetAddr));
-        String subnetAddrResult = padRight(originalNetAddr + Integer.toBinaryString(subnetAddr), 32);
-        String broadcastSubNetAddr = getBroadcastAddr(originalNetAddr + Integer.toBinaryString(subnetAddr), 32);
-        System.out.println(subnetAddrResult);
-        System.out.println(broadcastSubNetAddr);
-        String hostAddr = padLeft(getHostAddr(subnetAddrResult, neededHost), 32);
-        System.out.println(hostAddr);
-        System.out.println(getToHumanReadableAddr(hostAddr) + "/" + newMask);
-
+        new NetFrame(true);
     }
 
-    private static String getBinaryIpAsString(String source) {
+
+    public static String getHostAddr(String netAddr, int hostnum) {
+        Long netAddrInt = Long.parseLong(netAddr, 2);
+        return Long.toBinaryString(netAddrInt + hostnum);
+    }
+
+    public static int isIntegerValue(String str) {
+        if (str == null) return -1;
+        if (str.equals(""))  return -1;
+        int result = 0;
+        try {
+            result = Integer.parseInt(str);
+        } catch (NumberFormatException ne) {
+            System.out.println("Its not a number");
+            return -1;
+        }
+        return result;
+    }
+
+    public static String getBinaryIpAsString(String source) {
         if (source == null)
             return null;
         String[] array = source.split("\\.");
@@ -49,8 +41,7 @@ public class Netter {
         return str.toString();
     }
 
-
-    private static int getBitsForSubNet(int subNetNumber) {
+    public static int getBitsForSubNet(int subNetNumber) {
         int bitsForSubNet = 1;
         int minSubNetNumber = 2;
         while(true) {
@@ -62,29 +53,13 @@ public class Netter {
         return bitsForSubNet;
     }
 
-    private static String getToHumanReadableAddr(String source) {
+    public static String getHumanReadableAddr(String source) {
         if (source.length() != 32)
             return "source String is not 32 characters long";
         return Integer.parseInt(source.substring(0,8), 2)
                 + "." + Integer.parseInt(source.substring(8,16), 2)
                 + "." + Integer.parseInt(source.substring(16, 24), 2)
                 + "." + Integer.parseInt(source.substring(24, 32), 2);
-    }
-
-    private static int[] getBinaryIP(String source) {
-        if (source == null)
-            return null;
-        String[] array = source.split("\\.");
-        StringBuilder str = new StringBuilder();
-        for (String s : array) {
-            s = Integer.toBinaryString(Integer.valueOf(s));
-            str.append(padLeft(s, 8));
-        }
-        int result[] = new int[32];
-        String s = str.toString();
-        for (int i = 0; i < s.length(); ++i)
-            result[i] = Character.getNumericValue(s.charAt(i));
-        return result;
     }
 
     public static String padLeft(String s, int n) {
@@ -109,13 +84,36 @@ public class Netter {
             s = Integer.toBinaryString(Integer.valueOf(s));
             System.out.println(s);
         }
-
         return result;
     }
 
-    private static String getHostAddr(String netAddr, int hostnum) {
-        int netAddrInt = Integer.parseInt(netAddr, 2);
-        return Integer.toBinaryString(netAddrInt + hostnum);
+
+    public static NetAddress checkInputValues(String source) {
+        if (source.endsWith("/"))
+            return null;
+        String[] IpAndMask = (source.split("/"));
+        int mask = Integer.parseInt(IpAndMask[1]);
+        if ( mask > 24 )
+            return null;
+        String[] ip = IpAndMask[0].split("\\.");
+        for (String s : ip) {
+            if (s == null)
+                return null;
+            if (Integer.parseInt(s) > 255)
+                return null;
+        }
+        System.out.println("AllRight");
+        return new NetAddress(IpAndMask[0] ,mask);
+    }
+
+    public static String getMask4Octets(int mask) {
+        StringBuilder tmp = new StringBuilder();
+        for (int i = 0; i < mask; i++) {
+            tmp.append("1");
+        }
+        System.out.println("tmp is = " + tmp);
+        String bitMask = padRight(tmp.toString(), 32);
+        return getHumanReadableAddr(bitMask);
     }
 
 }
