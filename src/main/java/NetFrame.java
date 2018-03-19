@@ -175,7 +175,7 @@ public class NetFrame extends JFrame{
                     String result = Netter.getHumanReadableAddr(hostAddr) + "/" + newMask;
                     hostAddrResult.setText(result);
                     broadcastAddrResult.setText(Netter.getHumanReadableAddr(broadcastSubNetAddr) + "/" + newMask);
-                    subNetAddrResult.setText(Netter.getHumanReadableAddr(hostAddr) + "/" + newMask);
+                    subNetAddrResult.setText(Netter.getHumanReadableAddr(subnetAddrResult) + "/" + newMask);
                     bitMasAddr.setText(Netter.getMask4Octets(newMask));
                 }
             }
