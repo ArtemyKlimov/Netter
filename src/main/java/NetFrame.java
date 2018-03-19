@@ -173,7 +173,11 @@ public class NetFrame extends JFrame{
                     String broadcastSubNetAddr = Netter.getBroadcastAddr(originalNetAddr + Netter.padLeft(Integer.toBinaryString(subnetAddr), bitsForSubNet), 32);
                     String hostAddr = Netter.padLeft(Netter.getHostAddr(subnetAddrResult, neededHostNum), 32);
                     String result = Netter.getHumanReadableAddr(hostAddr) + "/" + newMask;
-                    hostAddrResult.setText(result);
+                    if (!broadCastAddr.isSelected())
+                        hostAddrResult.setText(result);
+                    else {
+                        hostAddrResult.setText("");
+                    }
                     broadcastAddrResult.setText(Netter.getHumanReadableAddr(broadcastSubNetAddr) + "/" + newMask);
                     subNetAddrResult.setText(Netter.getHumanReadableAddr(subnetAddrResult) + "/" + newMask);
                     bitMasAddr.setText(Netter.getMask4Octets(newMask));
